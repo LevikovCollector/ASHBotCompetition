@@ -36,6 +36,20 @@ class TopicInfo(Base):
                                               self.topic_date_end, self.topic_town, self.topic_status,
                                               self.topic_is_new)
 
+class User(Base):
+    __tablename__ = 'User'
+    user_chat_id = Column(Integer, primary_key = True)
+    user_town = Column(String(150))
+    user_last_command = Column(String(150))
+
+    def __init__(self, user_chat_id=None, user_town=None, user_last_command=None):
+        self.user_chat_id = user_chat_id
+        self.user_town = user_town
+        self.user_last_command = user_last_command
+
+    def __repr__(self):
+        return '<info {} {}>'.format(self.user_chat_id, self.user_town, self.user_last_command)
+
 
 if __name__ == "__main__":
     #Создает базу данных

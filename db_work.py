@@ -1,5 +1,4 @@
-from db_ash_conf import TopicInfo, db_session
-from datetime import datetime
+from db_ash_conf import TopicInfo, User, db_session
 from log import add_log_row
 
 
@@ -45,6 +44,33 @@ def upd_is_new(topic_id, value):
         add_log_row(e.args, 'war')
 
 
+def add_user(user_chat, user_town, last_command):
+    try:
+        new_user = User(user_chat, user_town, last_command)
+        db_session.add(new_user)
+        db_commit()
+    except Exception as e:
+        add_log_row(e.args, 'war')
+
+
+def get_town_by_user(user_chat):
+    try:
+        user = User()
+        info = user.query.get(user_chat)
+        return info.user_town
+    except Exception as e:
+        add_log_row(e.args, 'war')
+
+
+def upd_town_by_user(user_chat,  new_town):
+    try:
+        old_town = db_session.query(User).get(user_chat)
+        old_town.user_town = new_town
+        db_commit()
+    except Exception as e:
+        add_log_row(e.args, 'war')
+
+
 def get_only_new_topics(town='all'):
     try:
         all_new_topics = TopicInfo()
@@ -58,8 +84,33 @@ def get_only_new_topics(town='all'):
     except Exception as e:
         add_log_row(e.args, 'war')
 
-if __name__ == '__main__':
-   links = get_topic_by_town('Москва')
-   for link in links:
-       print(link.topic_name)
 
+def upd_user_last_command(user_chat, new_command):
+    try:
+        old_command = db_session.query(User).get(user_chat)
+        old_command.user_last_command = new_command
+        db_commit()
+    except Exception as e:
+        add_log_row(e.args, 'war')
+
+
+def get_user_last_command(user_chat):
+    try:
+        user = User()
+        info = user.query.get(user_chat)
+        return info.user_last_command
+    except Exception as e:
+        add_log_row(e.args, 'war')
+
+
+def exists_user(user_chat):
+    try:
+        user = User()
+        info = user.query.get(user_chat)
+        return info
+    except Exception as e:
+        add_log_row(e.args, 'war')
+
+if __name__ == '__main__':
+   print(get_user_last_command(359883047))
+   print(get_town_by_user(359883047))

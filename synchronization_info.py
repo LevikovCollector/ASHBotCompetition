@@ -37,7 +37,7 @@ def update_table_topic_info():
                     if date_start >= datetime.today():
                         save_topic_info(name=topic['name'],
                                         new_link=topic['link'],
-                                        town=topic['town'],
+                                        town=topic['town'].lower(),
                                         date_start=date_start,
                                         date_end=date_end,
                                         status=topic['status'])
@@ -63,7 +63,7 @@ def initialization_table_topic_info():
            if date_start >= datetime.today():
                save_topic_info(name=topic['name'],
                                new_link=topic['link'],
-                               town=topic['town'],
+                               town=topic['town'].lower(),
                                date_start=date_start,
                                date_end=date_end,
                                status=topic['status'])
