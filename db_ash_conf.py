@@ -52,5 +52,5 @@ class User(Base):
 
 
 if __name__ == "__main__":
-    #Создает базу данных
+    #Create data base
     Base.metadata.create_all(bind=engine)

@@ -41,7 +41,7 @@ def parser_table_topics(step):
     all_rows = len(table_with_data)
     try:
         if step == 0:
-            # определяем строку с которой начинаются темы форума
+            # find strint thema
             for index in range(0, all_rows):
                 for rows in table_with_data[index].find_all('td'):
                     try:
@@ -53,7 +53,7 @@ def parser_table_topics(step):
                         pass
                 if start_index != 0:
                     break
-        # обрабатываем строки
+        # work with rows
         for index in range(start_index + 1, all_rows):
             topic = table_with_data[index].find('a')
             topic_link = topic['href']
