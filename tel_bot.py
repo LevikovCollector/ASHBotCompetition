@@ -1,3 +1,4 @@
+#! /env/Bot/Scripts/python.exe
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CommandHandler, CallbackQueryHandler
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from template_builder import TemplateForBot

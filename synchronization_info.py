@@ -1,3 +1,4 @@
+#! /env/Bot/Scripts/python.exe
 from parser_ash import parser_table_topics
 from db_work import db_commit, save_topic_info, get_all_links, upd_is_new
 from datetime import datetime
@@ -70,5 +71,4 @@ def initialization_table_topic_info():
                db_commit()
 
 if __name__ == '__main__':
-    #initialization_table_topic_info()
     update_table_topic_info()
