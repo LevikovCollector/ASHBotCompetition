@@ -41,7 +41,7 @@ def parser_table_topics(step):
     all_rows = len(table_with_data)
     try:
         if step == 0:
-            # find strint thema
+            # find string subject
             for index in range(0, all_rows):
                 for rows in table_with_data[index].find_all('td'):
                     try:

@@ -10,7 +10,7 @@ import re
 
 class BotASH():
     def __init__(self):
-        api_key = '544146061:AAHqkf3obEukKJM-TQ7yHDy_FTYDS_XkPfU'
+        api_key = '426807183:AAGHLEjcrwrvFKCPY_BAR8j7v45Sav61gMo'
         updater = Updater(api_key)
 
         self.bot_templates = TemplateForBot()
@@ -149,18 +149,18 @@ class BotASH():
         template = '\D+'
         m_town= re.match(template, town)
 
-        if len(re.split('[\.,\, \s]', town)) != 1:
-            bot.send_message(chat_id = user_chat_id, text = 'Введено более одного города(/set_def_town)',
+        if len(re.split('[\.,\,\s ;]', town)) != 1:
+            bot.send_message(chat_id = user_chat_id, text = 'Введено более одного города',
                          parse_mode = ParseMode.HTML)
             good_town = False
 
         elif m_town is None:
             bot.send_message(chat_id = user_chat_id, text = 'Город введен неверно. Попробуйте еще раз '
-                                                    '(/set_def_town)', parse_mode = ParseMode.HTML)
+                                                    , parse_mode = ParseMode.HTML)
             good_town = False
         elif len(town) != m_town.span()[1]:
             bot.send_message(chat_id = user_chat_id, text = 'Город введен неверно. Попробуйте еще раз '
-                                                            '(/set_def_town)', parse_mode = ParseMode.HTML)
+                                                            , parse_mode = ParseMode.HTML)
             good_town = False
         return good_town
 
