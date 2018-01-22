@@ -1,4 +1,4 @@
-#! /env/Bot/Scripts/python.exe
+#!/usr/bin/env /mnt/Bot/ASH/ASHBotCompetition/env/bin/python
 from parser_ash import parser_table_topics
 from db_work import db_commit, save_topic_info, get_all_links, upd_is_new
 from datetime import datetime

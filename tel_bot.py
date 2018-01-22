@@ -1,4 +1,4 @@
-#! /env/Bot/Scripts/python.exe
+#!/usr/bin/env /mnt/Bot/ASH/ASHBotCompetition/env/bin/python
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CommandHandler, CallbackQueryHandler
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from template_builder import TemplateForBot
