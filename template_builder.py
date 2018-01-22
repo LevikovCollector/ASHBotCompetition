@@ -3,9 +3,9 @@ from jinja2 import Template
 
 class TemplateForBot():
     def __init__(self):
-        self.greeting_template_path = 'templates\greeting.html'
-        self.concurs_template_path = 'templates\concurs.html'
-        self.messages_template_path = 'templates\messages.html'
+        self.greeting_template_path = 'templates/greeting.html'
+        self.concurs_template_path = 'templates/concurs.html'
+        self.messages_template_path = 'templates/messages.html'
 
     def get_greeting_template(self, name):
         with open(self.greeting_template_path, 'r', encoding='utf-8') as greet_temp:
