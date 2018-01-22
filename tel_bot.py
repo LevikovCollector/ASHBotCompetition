@@ -10,7 +10,7 @@ import re
 
 class BotASH():
     def __init__(self):
-        api_key = '426807183:AAGHLEjcrwrvFKCPY_BAR8j7v45Sav61gMo'
+        api_key = '525647701:AAEq1jtHGepUASCqdGITn6zuuhSoQYJyAyA'
         updater = Updater(api_key)
 
         self.bot_templates = TemplateForBot()
