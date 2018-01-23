@@ -6,12 +6,13 @@ from db_work import (get_topic_by_town, add_user, get_town_by_user, upd_town_by_
                      get_user_last_command, exists_user)
 from datetime import datetime
 import re
-
+#api_key = '525647701:AAEq1jtHGepUASCqdGITn6zuuhSoQYJyAyA'
+#api_key = 426807183:AAGHLEjcrwrvFKCPY_BAR8j7v45Sav61gMo
 
 class BotASH():
     def __init__(self):
-        api_key = '525647701:AAEq1jtHGepUASCqdGITn6zuuhSoQYJyAyA'
-        updater = Updater(api_key)
+
+        updater = Updater('525647701:AAEq1jtHGepUASCqdGITn6zuuhSoQYJyAyA')
 
         self.bot_templates = TemplateForBot()
         dispacher = updater.dispatcher
@@ -23,11 +24,8 @@ class BotASH():
         updater.idle()
 
     def greet_user(self, bot, update):
-        keyboard = [[InlineKeyboardButton("Добавить город", callback_data = 'add_city'),
-                     InlineKeyboardButton("Изменить город", callback_data = 'edit_city'),
-                     InlineKeyboardButton("Удалить город", callback_data = 'del_city')],
-
-                    [InlineKeyboardButton("Отобразить конкурсы", callback_data = 'show_concurs')]]
+        keyboard = [[InlineKeyboardButton("Отобразить конкурсы", callback_data = 'show_concurs')],
+                    [InlineKeyboardButton("Город отслеживания", callback_data='city_concurs')]]
 
         reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -102,6 +100,13 @@ class BotASH():
 
         if query.data == 'show_concurs':
             self.get_concurs(bot, update, user_chat_id)
+
+        if query.data == 'city_concurs':
+            keyboard = [[InlineKeyboardButton("Доб. город", callback_data='add_city'),
+                         InlineKeyboardButton("Изм. город", callback_data='edit_city'),
+                         InlineKeyboardButton("Уд. город", callback_data='del_city')]]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            bot.send_message(chat_id = user_chat_id, text='Выберите команду', reply_markup=reply_markup)
 
     def show_message(self, bot, update, user_chat_id):
         user_chat_id = user_chat_id
