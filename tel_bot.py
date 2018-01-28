@@ -1,18 +1,23 @@
 #!/usr/bin/env /mnt/Bot/ASH/ASHBotCompetition/env/bin/python
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CommandHandler, CallbackQueryHandler
-from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup
 from template_builder import TemplateForBot
 from db_work import (get_topic_by_town, add_user, get_town_by_user, upd_town_by_user, upd_user_last_command,
                      get_user_last_command, exists_user)
 from datetime import datetime
 import re
-#api_key = '525647701:AAEq1jtHGepUASCqdGITn6zuuhSoQYJyAyA'
-#api_key = 426807183:AAGHLEjcrwrvFKCPY_BAR8j7v45Sav61gMo
+
+
+def get_bot_token():
+    with open('token', 'r', encoding = 'utf-8') as token_bot:
+        t_bot = token_bot.read()
+    return t_bot
+
 
 class BotASH():
     def __init__(self):
 
-        updater = Updater('525647701:AAEq1jtHGepUASCqdGITn6zuuhSoQYJyAyA')
+        updater = Updater(get_bot_token())
 
         self.bot_templates = TemplateForBot()
         dispacher = updater.dispatcher
@@ -24,14 +29,13 @@ class BotASH():
         updater.idle()
 
     def greet_user(self, bot, update):
-        keyboard = [[InlineKeyboardButton("Отобразить конкурсы", callback_data = 'show_concurs')],
-                    [InlineKeyboardButton("Город отслеживания", callback_data='city_concurs')]]
+        keyboard = [[KeyboardButton('Город отслеживания'), KeyboardButton('Текущий город')],
+                    [KeyboardButton('Отобразить конкурсы')]]
 
-        reply_markup = InlineKeyboardMarkup(keyboard)
+        reply_markup = ReplyKeyboardMarkup(keyboard, True)
 
         user_name = update.effective_user.first_name
         text = self.bot_templates.get_greeting_template(user_name)
-
 
         update.message.reply_text(text, reply_markup = reply_markup)
 
@@ -98,16 +102,6 @@ class BotASH():
                                  text = 'У Вас не установлен город!',
                                  parse_mode = ParseMode.HTML)
 
-        if query.data == 'show_concurs':
-            self.get_concurs(bot, update, user_chat_id)
-
-        if query.data == 'city_concurs':
-            keyboard = [[InlineKeyboardButton("Доб. город", callback_data='add_city'),
-                         InlineKeyboardButton("Изм. город", callback_data='edit_city'),
-                         InlineKeyboardButton("Уд. город", callback_data='del_city')]]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            bot.send_message(chat_id = user_chat_id, text='Выберите команду', reply_markup=reply_markup)
-
     def show_message(self, bot, update, user_chat_id):
         user_chat_id = user_chat_id
         mes_text = self.bot_templates.get_messages_temlpate(self.last_command)
@@ -115,39 +109,62 @@ class BotASH():
                          parse_mode = ParseMode.HTML)
 
     def listen_user(self, bot, update):
+        settings_command = ['отобразить конкурсы', 'город отслеживания', 'текущий город']
         user_chat_id = update.message.chat_id
         text_from_user = str(update.message.text).lower().strip()
         choosen_command = get_user_last_command(user_chat_id)
         user_town_db = get_town_by_user(user_chat_id)
 
-        if choosen_command == 'add_city':
-            if user_town_db is None:
+        if text_from_user in settings_command:
+            if text_from_user == settings_command[0]:
+                self.get_concurs(bot, update, user_chat_id)
+
+            elif text_from_user == settings_command[1]:
+                keyboard = [[InlineKeyboardButton("Доб. город", callback_data = 'add_city'),
+                             InlineKeyboardButton("Изм. город", callback_data = 'edit_city'),
+                             InlineKeyboardButton("Уд. город", callback_data = 'del_city')]]
+                reply_markup = InlineKeyboardMarkup(keyboard)
+                bot.send_message(chat_id = user_chat_id, text = 'Выберите команду', reply_markup = reply_markup)
+
+            elif text_from_user == settings_command[2]:
+                if user_town_db is not None:
+                    bot.send_message(chat_id = user_chat_id,
+                                     text = 'Ваш город: {}'.format(user_town_db.capitalize()),
+                                     parse_mode = ParseMode.HTML)
+                else:
+                    bot.send_message(chat_id = user_chat_id,
+                                     text = 'У Вас не установлен город!',
+                                     parse_mode = ParseMode.HTML)
+
+        else:
+            if choosen_command == 'add_city':
+                if user_town_db is None:
+                        if self.check_town(bot, text_from_user, user_chat_id):
+                            upd_town_by_user(user_chat_id, text_from_user)
+                            bot.send_message(chat_id = user_chat_id,
+                                             text = 'Ваш город: {} - сохранен'.format(update.message.text),
+                                             parse_mode = ParseMode.HTML)
+                else:
+                    bot.send_message(chat_id = user_chat_id,
+                                     text = 'У Вас уже введен город: {}'.format(user_town_db.capitalize()),
+                                     parse_mode = ParseMode.HTML)
+
+            if choosen_command == 'edit_city':
+                if user_town_db is None:
+                    bot.send_message(chat_id = user_chat_id,
+                                     text = 'У Вас не установлен город!',
+                                     parse_mode = ParseMode.HTML)
+                else:
                     if self.check_town(bot, text_from_user, user_chat_id):
                         upd_town_by_user(user_chat_id, text_from_user)
                         bot.send_message(chat_id = user_chat_id,
-                                         text = 'Ваш город: {} - сохранен'.format(update.message.text),
-                                         parse_mode = ParseMode.HTML)
-            else:
-                bot.send_message(chat_id = user_chat_id,
-                                 text = 'У Вас уже введен город: {}'.format(user_town_db.capitalize()),
-                                 parse_mode = ParseMode.HTML)
+                                        text = 'Установлен новый город: {}'.format(text_from_user.capitalize()),
+                                        parse_mode = ParseMode.HTML)
 
-        if choosen_command == 'edit_city':
-            if user_town_db is None:
+            if choosen_command is None:
                 bot.send_message(chat_id = user_chat_id,
                                  text = 'У Вас не установлен город!',
                                  parse_mode = ParseMode.HTML)
-            else:
-                if self.check_town(bot, text_from_user, user_chat_id):
-                    upd_town_by_user(user_chat_id, text_from_user)
-                    bot.send_message(chat_id = user_chat_id,
-                                    text = 'Установлен новый город: {}'.format(text_from_user.capitalize()),
-                                    parse_mode = ParseMode.HTML)
-
-        if choosen_command is None:
-            bot.send_message(chat_id = user_chat_id,
-                             text = 'У Вас не установлен город!',
-                             parse_mode = ParseMode.HTML)
 
     def check_town(self, bot, town, user_chat_id):
         good_town = True
@@ -168,6 +185,7 @@ class BotASH():
                                                             , parse_mode = ParseMode.HTML)
             good_town = False
         return good_town
+
 
 if __name__ == '__main__':
     bot = BotASH()
