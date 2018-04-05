@@ -5,11 +5,12 @@ from template_builder import TemplateForBot
 from db_work import (get_topic_by_town, add_user, get_town_by_user, upd_town_by_user, upd_user_last_command,
                      get_user_last_command, exists_user)
 from datetime import datetime
+from synchronization_info import update_table_topic_info
 import re
 
 
 def get_bot_token():
-    with open('token', 'r', encoding = 'utf-8') as token_bot:
+    with open('token', 'r') as token_bot:
         t_bot = token_bot.read()
     return t_bot
 
@@ -22,11 +23,19 @@ class BotASH():
         self.bot_templates = TemplateForBot()
         dispacher = updater.dispatcher
         dispacher.add_handler(CommandHandler("start", self.greet_user))
+        dispacher.add_handler(CommandHandler("sync", self.upd_data))
         dispacher.add_handler(CallbackQueryHandler(self.buttons))
         dispacher.add_handler(MessageHandler(Filters.text, self.listen_user))
 
         updater.start_polling()
         updater.idle()
+
+    def upd_data(self, bot, update):
+        res_sync = update_table_topic_info()
+        if res_sync:
+            update.message.reply_text('Данные обновлены')
+        else:
+            update.message.reply_text('Возникла ошибка: {}'.format(res_sync))
 
     def greet_user(self, bot, update):
         keyboard = [[KeyboardButton('Город отслеживания'), KeyboardButton('Текущий город')],

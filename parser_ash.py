@@ -3,7 +3,7 @@ import requests, re
 from log import add_log_row
 
 URL = 'http://hustle-sa.ru/forum/index.php?showforum=6&prune_day=100&sort_by=Z-A&sort_key=title&st'
-TEMP_DATA = '\d\d\d\d-\d\d-\d\d'
+TEMP_DATA = '\d\d\d\d-\d\d-\d.'
 TEMP_NAME = '\s\D+'
 TEMP_DAY_END = '[,/]\d+'
 
@@ -83,7 +83,7 @@ def get_start_end_date(date_text):
     date_start = None
     date_end = None
     try:
-        date_start = re.findall(TEMP_DATA, date_text)[0]
+        date_start = re.findall(TEMP_DATA, date_text)[0].replace(',', '').replace('/', '')
         day_start = date_start.split('-')[-1]
         day_end = re.findall(TEMP_DAY_END, date_text)[0].replace(',', '').replace('/', '')
         date_end = date_start.replace(day_start, day_end)
@@ -93,4 +93,4 @@ def get_start_end_date(date_text):
     return [date_start, date_end]
 
 if __name__ == '__main__':
-    print(parser_table_topics(0))
+    print(get_start_end_date('(2018-12-8/9)'))
